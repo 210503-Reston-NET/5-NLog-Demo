@@ -1,29 +1,44 @@
 ﻿using System;
 using NLog;
+
 namespace NLogDemo
 {
-
-    public static class Program
+    class Program
     {
-        public static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-
-        public static void Main()
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        static void Main(string[] args)
         {
+            var config = new NLog.Config.LoggingConfiguration();
+
+            
+            //var logfile = new NLog.Targets.FileTarget("logfile") { FileName = "file.txt" };
+            var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
+                        
+            // Rules for mapping loggers to targets            
+            config.AddRule(LogLevel.Debug, LogLevel.Fatal, logconsole);
+            
+            //config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
+                        
+            // Apply config           
+            NLog.LogManager.Configuration = config;
+
+            
+    
             try
             {
-            logger.Debug("This is a debug message");
-            logger.Error("This is an error message");
-            logger.Fatal("This is a fatal message");
-            logger.Info("Hello World!");
-            System.Console.ReadKey();
+                Logger.Debug("This is a debug message");
+                Logger.Error("This is an error message");
+                Logger.Fatal("This is a fatal message");
+                Logger.Info("Hello World!");
 
+                throw new Exception("oops");
 
             }
             catch (Exception ex)
             {
-            logger.Error(ex, "Goodbye cruel world");
+                Logger.Error(ex, "Goodbye cruel world");
             }
+            
         }
-    }  
+    }    
 }
